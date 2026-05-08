@@ -3,16 +3,13 @@ FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
 
-# 安装 pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# 复制依赖文件
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
-RUN pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+# 使用 npm + package-lock.json（与本地一致；避免 Corepack/pnpm 在部分环境报 ERR_UNKNOWN_BUILTIN_MODULE）
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # 复制源码并构建
 COPY . .
-RUN pnpm run build
+RUN npm run build
 
 # ── 阶段2：后端运行时 ─────────────────────────────────────────────────────────
 FROM python:3.11-slim AS backend

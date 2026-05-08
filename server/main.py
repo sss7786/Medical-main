@@ -21,7 +21,7 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
@@ -710,7 +710,11 @@ def fallback_synthesize(
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
 @app.get("/")
-async def root() -> dict[str, str]:
+async def root() -> FileResponse | dict[str, str]:
+    # Docker / 生产：static 由前端 build 放入；开发仅跑后端时无该文件，返回 JSON 便于确认服务
+    built = BASE_DIR / "static" / "index.html"
+    if built.is_file():
+        return FileResponse(str(built))
     return {"service": "Medical Pre-consultation Agent API", "docs": "/docs", "api": "/api/chat"}
 
 
@@ -914,10 +918,7 @@ async def health() -> dict[str, Any]:  # noqa: D401
 # ── Docker 生产部署：同时提供前端静态文件 ────────────────────────────────────
 _STATIC_DIR = BASE_DIR / "static"
 if _STATIC_DIR.is_dir():
-    from fastapi.responses import FileResponse
-    from fastapi.staticfiles import StaticFiles as _SF
-
-    app.mount("/assets", _SF(directory=str(_STATIC_DIR / "assets")), name="assets")
+    app.mount("/assets", StaticFiles(directory=str(_STATIC_DIR / "assets")), name="assets")
 
     @app.get("/{full_path:path}", include_in_schema=False)
     async def _spa_fallback(full_path: str):  # noqa: D401

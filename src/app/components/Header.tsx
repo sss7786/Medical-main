@@ -14,6 +14,7 @@ import {
   FileJson,
   FileText,
   ChevronDown,
+  MoreHorizontal,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,11 +31,19 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { toast } from "sonner";
 import { SCENARIO_IDS, normalizeScenario, type ConsultScenarioId } from "@/utils/consultScenarios";
+import { cn } from "./ui/utils";
 
-function ToolbarSep() {
-  return <div className="hidden h-6 w-px shrink-0 bg-border/70 sm:block" aria-hidden />;
+function ToolbarSep({ className }: { className?: string }) {
+  return <div className={cn("hidden h-6 w-px shrink-0 bg-border/70 sm:block", className)} aria-hidden />;
 }
 
 interface HeaderProps {
@@ -155,9 +164,10 @@ export function Header({
           className="flex w-full flex-wrap items-center justify-end gap-x-1 gap-y-1.5 sm:w-auto sm:flex-nowrap sm:gap-x-1.5"
           aria-label="App toolbar"
         >
-          <ApiStatusIndicator />
-
-          <ToolbarSep />
+          <div className="hidden sm:contents">
+            <ApiStatusIndicator />
+            <ToolbarSep />
+          </div>
 
           <Button
             variant="ghost"
@@ -201,7 +211,7 @@ export function Header({
             </AlertDialog>
           ) : null}
 
-          <ToolbarSep />
+          <ToolbarSep className="max-sm:hidden" />
 
           {onScenarioChange ? (
             <div className={selectShell} title={t("scenarios.pickerTitle")}>
@@ -246,7 +256,8 @@ export function Header({
             </select>
           </div>
 
-          <ToolbarSep />
+          <div className="hidden sm:contents">
+            <ToolbarSep />
 
           <Button
             variant="ghost"
@@ -352,6 +363,69 @@ export function Header({
               <span className="whitespace-nowrap">{t("header.exportPdf")}</span>
             </Button>
           )}
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:hidden"
+                aria-label={t("header.moreMenuAria")}
+                title={t("header.moreMenu")}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="z-[520] max-h-[min(70dvh,calc(100vh-3rem))] w-[min(calc(100vw-1rem),18rem)] overflow-y-auto"
+            >
+              <DropdownMenuItem
+                onSelect={() => {
+                  window.open(`${window.location.origin}/api/health`, "_blank", "noopener,noreferrer");
+                }}
+              >
+                <Activity className="h-4 w-4 opacity-70" />
+                {t("header.viewApiHealth")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => toggleTheme()}>
+                {theme === "light" ? (
+                  <Moon className="h-4 w-4 opacity-70" />
+                ) : (
+                  <Sun className="h-4 w-4 opacity-70" />
+                )}
+                {theme === "light" ? t("header.themeDark") : t("header.themeLight")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => void handleShare()}>
+                <Share2 className="h-4 w-4 opacity-70" />
+                {t("header.share")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => runPrint()}>
+                <Printer className="h-4 w-4 opacity-70" />
+                {t("header.print")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => runPrintWithPdfHint()}>
+                <Download className="h-4 w-4 opacity-70" />
+                {t("header.exportPdf")}
+              </DropdownMenuItem>
+              {onExportJson ? (
+                <DropdownMenuItem onSelect={() => onExportJson()}>
+                  <FileJson className="h-4 w-4 opacity-70" />
+                  {t("export.json")}
+                </DropdownMenuItem>
+              ) : null}
+              {onExportMarkdown ? (
+                <DropdownMenuItem onSelect={() => onExportMarkdown()}>
+                  <FileText className="h-4 w-4 opacity-70" />
+                  {t("export.markdown")}
+                </DropdownMenuItem>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
       </div>
     </header>

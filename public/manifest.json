@@ -1,0 +1,11 @@
+{
+  "name": "MedBrief 医疗预问诊整理",
+  "short_name": "MedBrief",
+  "description": "就诊前对话与表单整理 · 问诊报告预览",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fafafa",
+  "theme_color": "#2D5CFE"
+}

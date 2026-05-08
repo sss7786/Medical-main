@@ -22,7 +22,10 @@
     "clearSessionCancel": "Cancel",
     "clearSessionSuccess": "Local session cleared",
     "printPdfTipTitle": "How to get a PDF",
-    "printPdfTipBody": "In the system print dialog, choose “Save as PDF” (or “Microsoft Print to PDF”) as the printer."
+    "printPdfTipBody": "In the system print dialog, choose “Save as PDF” (or “Microsoft Print to PDF”) as the printer.",
+    "moreMenu": "More",
+    "moreMenuAria": "Open menu: theme, share, export…",
+    "viewApiHealth": "Open API health"
   },
   "scenarios": {
     "pickerTitle": "Visit scenario",
@@ -112,13 +115,19 @@
     "openSheet": "Open consultation report",
     "staleHint": "The chat or step form changed — refresh the report to update the preview.",
     "refreshShort": "Refresh",
+    "refreshFull": "Refresh report (Agent)",
+    "refreshTooltip": "Rebuild the structured report from chat and step-form notes.",
+    "synthesizeBanner": "Could not refresh the report (network or server error).",
+    "retrySynthesize": "Retry refresh",
+    "dismissBanner": "Dismiss",
     "generatedTime": "Generated",
     "updating": "Live Updating",
     "basicInfo": "Basic Information",
     "name": "Name",
     "gender": "Gender",
     "age": "Age",
-    "visitDate": "Visit Date"
+    "visitDate": "Visit Date",
+    "editHintBadge": "Tap pencil to edit on mobile"
   },
   "timeline": {
     "title": "Symptom Timeline",
@@ -162,7 +171,18 @@
     "voiceListening": "Listening… tap again to stop",
     "voiceUnsupported": "Voice input is not supported in this browser. Try Chrome or Edge desktop, or type instead.",
     "voiceError": "Speech recognition failed. Please try again or type your message.",
+    "voiceMicBlocked": "Microphone access denied",
+    "voiceMicBlockedHint": "Allow microphone for this site in browser settings, or type instead.",
+    "voiceMicHelp": "How to allow the mic",
+    "voiceLimitedBrowser": "Speech input may be unreliable in this browser — try Chrome / Edge (desktop or Android) if issues persist.",
     "voiceWait": "Please wait until the assistant finishes replying before using voice input.",
+    "networkBanner": "The last chat request did not finish — network or server issue.",
+    "retry": "Retry",
+    "dismissBanner": "Dismiss",
+    "pdfParsing": "Reading PDF…",
+    "pdfTooLarge": "This PDF is too large (try ≤12 MB). Split or compress before uploading.",
+    "pdfManyPages": "~{{pages}} pages detected — uploads may be slow on mobile; consider uploading only relevant pages.",
+    "pdfRetry": "PDF upload failed: {{detail}} · Try again with a better connection.",
     "progressHeading": "Visit progress",
     "progressStepSuffix": "steps",
     "progress": {

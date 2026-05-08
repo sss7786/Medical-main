@@ -12,6 +12,7 @@ import { Input } from "./ui/input";
 import { FileText, Calendar, RefreshCw, AlertCircle, Pencil, Check, X } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { ScrollArea } from "./ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { getOverallSeverity } from '../../utils/severityAssessment';
 import type { ReportBundle, BasicInfo, TimelineEvent, MedicationItem } from '@/types/report';
 import { toast } from 'sonner';
@@ -26,6 +27,8 @@ interface RightPanelProps {
   canRefresh?: boolean;
   sheetLayout?: boolean;
   staleReportHint?: boolean;
+  synthesizeError?: string | null;
+  onDismissSynthesizeError?: () => void;
 }
 
 // ── 行内可编辑字段 ────────────────────────────────────────────────────────────
@@ -225,6 +228,8 @@ export function RightPanel({
   canRefresh = false,
   sheetLayout = false,
   staleReportHint = false,
+  synthesizeError = null,
+  onDismissSynthesizeError,
 }: RightPanelProps) {
   const { t } = useTranslation();
 
@@ -281,17 +286,27 @@ export function RightPanel({
               <FileText className="w-5 h-5 text-primary" />
               <h2 className="text-2xl font-semibold">{t('report.title')}</h2>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              className="gap-2"
-              disabled={refreshing}
-              onClick={triggerRefresh}
-            >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              刷新报告（调用 Agent 合成）
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="gap-2"
+                  disabled={refreshing}
+                  onClick={triggerRefresh}
+                  title={t('report.refreshTooltip')}
+                  aria-label={`${t('report.refreshFull')} · ${t('report.refreshTooltip')}`}
+                >
+                  <RefreshCw className={`size-4 shrink-0 sm:size-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span className="hidden sm:inline">{t('report.refreshFull')}</span>
+                  <span className="sm:hidden">{t('report.refreshShort')}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="hidden max-w-xs md:block">
+                {t('report.refreshTooltip')}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
@@ -301,11 +316,47 @@ export function RightPanel({
             <Badge variant="secondary">{refreshing ? '正在更新…' : t('report.updating')}</Badge>
             {report && (
               <Badge variant="outline" className="text-xs gap-1">
-                <Pencil className="w-2.5 h-2.5" />小屏点铅笔编辑
+                <Pencil className="w-2.5 h-2.5" />{t('report.editHintBadge')}
               </Badge>
             )}
           </div>
         </div>
+
+        {/* 合成失败（弱网 / 服务异常） */}
+        {synthesizeError ? (
+          <div
+            role="alert"
+            className="flex flex-wrap items-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 flex-1 break-words">
+              {t('report.synthesizeBanner')}
+              <span className="mt-0.5 block text-xs font-normal opacity-90">{synthesizeError}</span>
+            </span>
+            <div className="flex shrink-0 gap-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                className="h-8"
+                disabled={refreshing || !canRefresh}
+                onClick={triggerRefresh}
+              >
+                <RefreshCw className={`mr-1 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                {t('report.retrySynthesize')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-8 px-2"
+                onClick={() => onDismissSynthesizeError?.()}
+              >
+                {t('report.dismissBanner')}
+              </Button>
+            </div>
+          </div>
+        ) : null}
 
         {/* 过期提示 */}
         {staleReportHint && (

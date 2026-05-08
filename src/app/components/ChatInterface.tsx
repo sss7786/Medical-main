@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Mic, Upload, Send, Bot, User, Volume2, VolumeX } from "lucide-react";
+import { Mic, Upload, Send, Bot, User, Volume2, VolumeX, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { postChatStream, postExtractPdf, type ChatMessage as ApiChatMessage } from "@/api/client";
 import { toast } from "sonner";
@@ -27,6 +27,14 @@ function getSpeechRecognitionCtor(): SpeechRecCtor | null {
   if (typeof window === "undefined") return null;
   const w = window as unknown as { SpeechRecognition?: SpeechRecCtor; webkitSpeechRecognition?: SpeechRecCtor };
   return w.SpeechRecognition || w.webkitSpeechRecognition || null;
+}
+
+function uaSuggestsLimitedSpeech(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  if (/Firefox|FxiOS/i.test(ua)) return true;
+  if (/Safari/i.test(ua) && !/Chrome|Chromium|Edg|CriOS|OPR/i.test(ua)) return true;
+  return false;
 }
 
 // ── TTS 播报 ──────────────────────────────────────────────────────────────────
@@ -97,6 +105,8 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [ttsSupported, setTtsSupported] = useState(false);
   const [emergencyOpen, setEmergencyOpen] = useState(false);
+  const [chatRetrySnapshot, setChatRetrySnapshot] = useState<UiMessage[] | null>(null);
+  const voiceLimitedWarnedRef = useRef(false);
 
   useEffect(() => {
     setSpeechSupported(!!getSpeechRecognitionCtor());
@@ -206,9 +216,22 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
   };
 
   const toggleSpeech = () => {
-    if (!speechSupported) { toast.message(t('chat.voiceUnsupported')); return; }
-    if (isTyping) { toast.message(t('chat.voiceWait')); return; }
-    if (listening) { stopSpeech(); return; }
+    if (!speechSupported) {
+      toast.message(t('chat.voiceUnsupported'));
+      return;
+    }
+    if (uaSuggestsLimitedSpeech() && !voiceLimitedWarnedRef.current) {
+      toast.message(t('chat.voiceLimitedBrowser'));
+      voiceLimitedWarnedRef.current = true;
+    }
+    if (isTyping) {
+      toast.message(t('chat.voiceWait'));
+      return;
+    }
+    if (listening) {
+      stopSpeech();
+      return;
+    }
     const Ctor = getSpeechRecognitionCtor();
     if (!Ctor) return;
     const rec = new Ctor();
@@ -228,11 +251,42 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
       text = text.trim();
       if (text) setInput((prev) => (prev ? `${prev.trimEnd()} ${text}` : text));
     };
-    rec.onerror = () => { toast.error(t('chat.voiceError')); recognitionRef.current = null; setListening(false); };
-    rec.onend = () => { recognitionRef.current = null; setListening(false); };
+    rec.onerror = (ev: Event) => {
+      const code = (ev as unknown as { error?: string }).error;
+      recognitionRef.current = null;
+      setListening(false);
+      if (code === 'not-allowed') {
+        toast.error(t('chat.voiceMicBlocked'), {
+          description: t('chat.voiceMicBlockedHint'),
+          action: {
+            label: t('chat.voiceMicHelp'),
+            onClick: () =>
+              window.open(
+                i18n.language?.startsWith('en')
+                  ? 'https://support.google.com/chrome/answer/2693767'
+                  : 'https://support.google.com/chrome/answer/2693767',
+                '_blank',
+                'noopener,noreferrer',
+              ),
+          },
+        });
+        return;
+      }
+      toast.error(t('chat.voiceError'));
+    };
+    rec.onend = () => {
+      recognitionRef.current = null;
+      setListening(false);
+    };
     recognitionRef.current = rec as unknown as { stop: () => void; abort: () => void };
     setListening(true);
-    try { rec.start(); } catch { toast.error(t('chat.voiceError')); recognitionRef.current = null; setListening(false); }
+    try {
+      rec.start();
+    } catch {
+      toast.error(t('chat.voiceError'));
+      recognitionRef.current = null;
+      setListening(false);
+    }
   };
 
   useEffect(() => {
@@ -256,11 +310,13 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
     setMessages(merged);
     setInput('');
     setIsTyping(true);
+    setChatRetrySnapshot(null);
 
     try {
       await appendStreamingAgentReply(merged);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      setChatRetrySnapshot(merged);
       toast.error('对话失败：' + msg);
       const agentMessage: UiMessage = {
         id: (Date.now() + 1).toString(),
@@ -285,13 +341,28 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
   };
 
   const handlePickFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const MAX_PDF_BYTES = 12 * 1024 * 1024;
+    const PDF_PAGE_WARN = 22;
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    if (!file.name.toLowerCase().endsWith('.pdf')) { toast.error('请上传 PDF 文件'); return; }
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      toast.error('请上传 PDF 文件');
+      return;
+    }
+    if (file.size > MAX_PDF_BYTES) {
+      toast.error(t('chat.pdfTooLarge'));
+      return;
+    }
     setIsTyping(true);
     try {
-      const { text, pages } = await postExtractPdf(file);
+      const { text, pages } = await toast.promise(postExtractPdf(file), {
+        loading: t('chat.pdfParsing'),
+        error: (err) => t('chat.pdfRetry', { detail: err instanceof Error ? err.message : String(err) }),
+      });
+      if (pages >= PDF_PAGE_WARN) {
+        toast.warning(t('chat.pdfManyPages', { pages }));
+      }
       const snippet = text.slice(0, 4000);
       const appended = `我上传了化验/检查 PDF（约 ${pages} 页），摘录如下，请仅作为整理参考：\n---\n${snippet}\n---`;
       const userMessage: UiMessage = {
@@ -303,11 +374,16 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
       const merged = [...messagesRef.current, userMessage];
       messagesRef.current = merged;
       setMessages(merged);
-      try { await appendStreamingAgentReply(merged); }
-      catch (err) { toast.error('对话失败：' + (err instanceof Error ? err.message : String(err))); }
-      finally { setIsTyping(false); }
-    } catch (err) {
-      toast.error('PDF 解析失败：' + (err instanceof Error ? err.message : String(err)));
+      setChatRetrySnapshot(null);
+      try {
+        await appendStreamingAgentReply(merged);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        setChatRetrySnapshot(merged);
+        toast.error('对话失败：' + msg);
+      }
+    } catch {
+      /* toast.promise 已提示 */
     } finally {
       setIsTyping(false);
     }
@@ -338,6 +414,53 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
           ))}
         </div>
       </div>
+
+      {chatRetrySnapshot ? (
+        <div
+          role="alert"
+          className="flex flex-wrap items-center gap-2 border-b border-amber-500/35 bg-amber-500/10 px-3 py-2 text-sm text-amber-950 dark:text-amber-100"
+        >
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span className="min-w-0 flex-1">{t('chat.networkBanner')}</span>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            className="h-8 shrink-0"
+            disabled={isTyping}
+            onClick={() => {
+              if (!chatRetrySnapshot || isTyping) return;
+              const snap = chatRetrySnapshot;
+              setMessages(snap);
+              messagesRef.current = snap;
+              setChatRetrySnapshot(null);
+              setIsTyping(true);
+              void (async () => {
+                try {
+                  await appendStreamingAgentReply(snap);
+                } catch (err) {
+                  const msg = err instanceof Error ? err.message : String(err);
+                  setChatRetrySnapshot(snap);
+                  toast.error('对话失败：' + msg);
+                } finally {
+                  setIsTyping(false);
+                }
+              })();
+            }}
+          >
+            {t('chat.retry')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="h-8 shrink-0 px-2"
+            onClick={() => setChatRetrySnapshot(null)}
+          >
+            {t('chat.dismissBanner')}
+          </Button>
+        </div>
+      ) : null}
 
       {/* 消息列表 */}
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-y-contain p-3 sm:space-y-4 sm:p-4">

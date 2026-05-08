@@ -83,6 +83,7 @@ export default function App() {
   const [report, setReport] = useState<ReportBundle | null>(() => getInit().report);
   const [lastSyncFingerprint, setLastSyncFingerprint] = useState(() => getInit().lastSyncFingerprint);
   const [refreshing, setRefreshing] = useState(false);
+  const [synthesizeErrorMsg, setSynthesizeErrorMsg] = useState<string | null>(null);
   const [reportSheetOpen, setReportSheetOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [scenarioId, setScenarioId] = useState<ConsultScenarioId>(() => readStoredScenario());
@@ -185,6 +186,7 @@ export default function App() {
       toast.warning('请先在左侧对话、上传 PDF，或在「分步表单」里用「快速选择」至少记录一条要点。');
       return;
     }
+    setSynthesizeErrorMsg(null);
     setRefreshing(true);
     try {
       const bundle = await postSynthesize({
@@ -197,6 +199,7 @@ export default function App() {
       toast.success('已从对话生成结构化报告');
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      setSynthesizeErrorMsg(msg);
       toast.error('刷新失败：' + msg);
     } finally {
       setRefreshing(false);
@@ -327,6 +330,8 @@ export default function App() {
             onReportChange={setReport}
             canRefresh={canRefresh}
             staleReportHint={showStaleReportHint}
+            synthesizeError={synthesizeErrorMsg}
+            onDismissSynthesizeError={() => setSynthesizeErrorMsg(null)}
           />
         </div>
       </div>
@@ -348,6 +353,8 @@ export default function App() {
               canRefresh={canRefresh}
               sheetLayout
               staleReportHint={showStaleReportHint}
+              synthesizeError={synthesizeErrorMsg}
+              onDismissSynthesizeError={() => setSynthesizeErrorMsg(null)}
             />
           </div>
         </SheetContent>
@@ -357,7 +364,7 @@ export default function App() {
       {!reportSheetOpen ? (
       <button
         type="button"
-        className="md:hidden fixed z-50 flex h-14 min-h-[44px] w-14 min-w-[44px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform active:scale-95 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
+        className="md:hidden fixed z-50 flex h-14 min-h-[44px] w-14 min-w-[44px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform active:scale-95 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:hover:scale-100"
         style={{
           bottom: 'max(1.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.5rem))',
           right: 'max(1.25rem, env(safe-area-inset-right, 0px))',

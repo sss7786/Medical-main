@@ -917,7 +917,7 @@ if _STATIC_DIR.is_dir():
     from fastapi.responses import FileResponse
     from fastapi.staticfiles import StaticFiles as _SF
 
-    app.mount("/assets", _SF(directory=str(_STATIC_DIR / "assets"), name="assets"))
+    app.mount("/assets", _SF(directory=str(_STATIC_DIR / "assets")), name="assets")
 
     @app.get("/{full_path:path}", include_in_schema=False)
     async def _spa_fallback(full_path: str):  # noqa: D401

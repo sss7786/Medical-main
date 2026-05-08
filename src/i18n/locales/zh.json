@@ -1,0 +1,266 @@
+{
+  "app": {
+    "name": "MedBrief",
+    "subtitle": "医疗预问诊整理器"
+  },
+  "header": {
+    "exportPdf": "打印 / 导出 PDF",
+    "moreExports": "更多导出：JSON / Markdown",
+    "print": "打印",
+    "printReport": "打印报告",
+    "share": "分享",
+    "history": "历史问诊记录",
+    "languageSwitch": "界面语言",
+    "langZh": "中文",
+    "langEn": "English",
+    "themeDark": "深色模式",
+    "themeLight": "浅色模式",
+    "clearSession": "清空会话",
+    "clearSessionTitle": "清空本地会话？",
+    "clearSessionDescription": "将清除当前对话、分步表单要点与报告预览，并删除本机保存的草稿。已在「历史记录」中同步到服务器的条目不会被删除。",
+    "clearSessionConfirm": "清空",
+    "clearSessionCancel": "取消",
+    "clearSessionSuccess": "已清空本地会话",
+    "printPdfTipTitle": "如何得到 PDF 文件",
+    "printPdfTipBody": "在下一步的系统打印窗口中，将打印机选为「另存为 PDF」或「Microsoft Print to PDF」，即可保存为 PDF。"
+  },
+  "scenarios": {
+    "pickerTitle": "接诊场景",
+    "pickerShort": "场景",
+    "exportTitle": "导出摘要",
+    "general": "一般初诊",
+    "pediatrics": "儿科",
+    "chronic": "慢病复诊",
+    "formPlanner": {
+      "general": "完成上方步骤后，可切换到「智能对话」补充细节。填写要点后请点击右侧「刷新报告」生成预览。",
+      "pediatrics": "请尽量按孩子年龄与体重补充用药剂量；完成后可切换「智能对话」补充体温曲线等细节，再刷新报告。",
+      "chronic": "请重点补充近期化验/血压或血糖指标、用药是否规律与是否有漏服；完成后刷新报告以便复诊前自查。"
+    },
+    "quickPick": {
+      "general": {
+        "symptoms": ["钝痛", "刺痛", "胀痛", "头晕", "发热"],
+        "timeline": ["3天前开始", "1周前开始", "2周前开始", "1个月前"],
+        "medications": ["无", "有（处方药）", "有（非处方药）"],
+        "allergies": ["无过敏史", "青霉素过敏", "头孢过敏", "食物过敏"]
+      },
+      "pediatrics": {
+        "symptoms": ["发热", "咳嗽", "腹泻", "呕吐", "皮疹", "哭闹不安", "拒奶/拒食"],
+        "timeline": ["6小时内", "1天前", "2–3天", "1周以上"],
+        "medications": ["未用药", "退烧药（按说明书）", "医院开的药", "益生菌/口服补液盐"],
+        "allergies": ["无", "食物过敏", "药物过敏", "湿疹/喘息史"]
+      },
+      "chronic": {
+        "symptoms": ["血压波动", "血糖偏高/偏低", "头晕乏力", "水肿", "胸闷气短"],
+        "timeline": ["本次复诊前一周", "上次调药后", "指标逐渐变差", "尚稳定"],
+        "medications": ["规律服药", "偶有漏服", "自行调整剂量", "新开/换药中"],
+        "allergies": ["无过敏", "对他汀不耐受", "造影剂过敏", "青霉素过敏"]
+      }
+    }
+  },
+  "export": {
+    "json": "导出 JSON",
+    "markdown": "导出 Markdown",
+    "jsonSuccess": "已下载 JSON 摘要",
+    "markdownSuccess": "已下载 Markdown 摘要",
+    "empty": "暂无可导出内容：请先填写对话或分步表单，并可选择刷新报告后再导出。",
+    "md": {
+      "docTitle": "就诊信息摘要（患者自备）",
+      "exportedAt": "导出时间",
+      "scenario": "接诊场景",
+      "sessionId": "会话 ID",
+      "locale": "语言",
+      "sectionChat": "对话摘录",
+      "sectionHints": "分步表单要点",
+      "sectionReport": "结构化报告摘录",
+      "emptyChat": "（尚无对话）",
+      "emptyHints": "（尚无表单要点）",
+      "noReport": "（尚未生成报告预览，可在右侧刷新报告后再次导出）",
+      "basicInfo": "基本信息",
+      "name": "姓名",
+      "gender": "性别",
+      "age": "年龄",
+      "visitDate": "就诊日期",
+      "timeline": "症状时间线",
+      "medications": "当前用药",
+      "allergies": "过敏史",
+      "questions": "建议问题",
+      "checklist": "携带物品清单",
+      "colField": "项目",
+      "colValue": "内容",
+      "department": "科室建议",
+      "primary": "主要科室",
+      "secondary": "备选科室",
+      "reason": "理由",
+      "reportGenerated": "报告生成时间：",
+      "footer": "本摘要由 MedBrief 整理生成，非诊断证明，就诊请以医生意见为准。",
+      "roleUser": "患者 / 家属",
+      "roleAssistant": "整理助手"
+    }
+  },
+  "tabs": {
+    "chat": "智能对话",
+    "form": "分步表单"
+  },
+  "disclaimer": {
+    "title": "免责声明",
+    "emergency": "本工具仅用于整理就诊信息，不提供医疗诊断。如遇紧急情况，请立即拨打 120/911 急救电话。",
+    "footer": "非诊断证明 · 仅供医生参考",
+    "description": "本报告由 MedBrief 智能问诊助手生成，基于患者自述信息整理。所有内容需由专业医生核实，不可作为诊断依据。"
+  },
+  "report": {
+    "title": "问诊报告预览",
+    "openSheet": "打开问诊报告",
+    "staleHint": "左侧对话或分步表单已有更新，建议点击「刷新报告」同步预览。",
+    "refreshShort": "刷新",
+    "generatedTime": "生成时间",
+    "updating": "实时更新中",
+    "basicInfo": "基本信息",
+    "name": "姓名",
+    "gender": "性别",
+    "age": "年龄",
+    "visitDate": "就诊日期"
+  },
+  "department": {
+    "title": "就诊科室推荐",
+    "aiRecommend": "AI 推荐",
+    "primary": "主要科室",
+    "secondary": "备选科室",
+    "noInfo": "请补充症状后刷新报告以获取推荐"
+  },
+  "timeline": {
+    "title": "症状时间线",
+    "severity": "严重度",
+    "selfReported": "自我报告",
+    "editHint": "点击描述可编辑",
+    "levels": {
+      "mild": "轻度",
+      "moderate": "中度",
+      "severe": "重度",
+      "critical": "危急"
+    }
+  },
+  "medication": {
+    "title": "用药与过敏史",
+    "currentMedication": "当前用药",
+    "allergies": "过敏史"
+  },
+  "questions": {
+    "title": "给医生的问题清单",
+    "suggestedQuestions": "建议向医生确认的问题",
+    "selected": "已选"
+  },
+  "checklist": {
+    "title": "就诊需携带物品",
+    "items": "需携带物品",
+    "required": "必备",
+    "allReady": "✓ 必备物品已备齐！",
+    "remaining": "还有 {count} 项必备物品需准备"
+  },
+  "chat": {
+    "welcome": "您好！我是就诊前信息整理助手，只做材料整理，不做诊断。请从「最近哪里不舒服、持续多久」说起。\n\n小提示：也可切换到「分步表单」用「快速选择」补充要点，再点右侧「刷新报告」生成预览。",
+    "welcomeByScenario": {
+      "general": "您好！我是就诊前信息整理助手，只做材料整理，不做诊断。请从「最近哪里不舒服、持续多久」说起。\n\n小提示：也可切换到「分步表单」用「快速选择」补充要点，再点右侧「刷新报告」生成预览。",
+      "pediatrics": "您好！这里是儿童就诊前信息整理模式。请先从孩子年龄、主要不适（发烧/咳嗽/腹泻等）、大概起病时间说起。\n\n如涉及退烧药或处方药，尽量写明剂量与频次；也可在「分步表单」用快速选项补充后刷新报告。",
+      "chronic": "您好！这里是慢病复诊整理模式。请优先说明近期血压/血糖等指标变化、用药是否规律、有无漏服或自行调药，以及相关化验/检查结果。\n\n可在「分步表单」勾选要点后，到右侧「刷新报告」生成复诊前摘要。"
+    },
+    "placeholder": "描述您的症状，我会帮您整理成问诊报告...",
+    "send": "发送",
+    "assistant": "AI 助手",
+    "voiceInput": "语音输入（普通话）",
+    "voiceListening": "正在聆听…再点一次结束",
+    "voiceUnsupported": "当前浏览器不支持语音输入，请使用 Chrome / Edge 桌面版或改用手打字。",
+    "voiceError": "语音识别出错，请重试或改用手动输入。",
+    "voiceWait": "请先等待助手回复结束再使用语音输入。",
+    "ttsOn": "语音播报已开启",
+    "ttsOff": "语音播报已关闭",
+    "progressHeading": "问诊进度",
+    "progressStepSuffix": "步",
+    "progress": {
+      "symptoms": "症状描述",
+      "timeline": "时间演变",
+      "meds": "用药情况",
+      "history": "过敏/病史",
+      "done": "信息完整"
+    },
+    "progressPed": {
+      "symptoms": "儿童主诉",
+      "timeline": "起病与体温",
+      "meds": "用药与剂量",
+      "history": "过敏与疫苗"
+    },
+    "progressChr": {
+      "symptoms": "近况与指标",
+      "timeline": "时间变化",
+      "meds": "用药依从",
+      "history": "合并/病史"
+    }
+  },
+  "form": {
+    "guided": {
+      "symptoms": "症状",
+      "timeline": "时间线",
+      "medications": "用药",
+      "allergies": "过敏"
+    },
+    "step": "步骤",
+    "next": "下一步",
+    "previous": "上一步",
+    "complete": "完成",
+    "steps": {
+      "basic": "基本信息",
+      "symptoms": "主要症状",
+      "history": "病史",
+      "medications": "用药情况"
+    },
+    "writeBioHint": "写入报告要点",
+    "quickPickLabel": "快速选择：",
+    "pickedToastTitle": "已记入表单要点",
+    "pickedToastBody": "「{{label}}」{{suggestion}} — 请点击右侧「刷新报告」同步到预览",
+    "basicOptional": "基本信息（可选）",
+    "bioPickedTitle": "已写入基本信息要点",
+    "bioPickedBody": "请点击右侧「刷新报告」同步到预览",
+    "smartPlannerTitle": "智能规划"
+  },
+  "severity": {
+    "title": "症状严重度评估",
+    "score": "评分",
+    "level": "级别",
+    "recommendation": "建议"
+  },
+  "print": {
+    "title": "医疗问诊报告",
+    "generatedBy": "由 MedBrief 智能问诊助手生成",
+    "date": "报告日期",
+    "success": "打印任务已发送"
+  },
+  "share": {
+    "copied": "链接已复制到剪贴板",
+    "error": "分享失败，请重试"
+  },
+  "status": {
+    "checking": "检测后端…",
+    "online": "后端已连接",
+    "offline": "后端不可用",
+    "healthUnreachable": "无法连接 /api/health。请确认 server 已启动（127.0.0.1:8000）。"
+  },
+  "history": {
+    "title": "历史问诊记录",
+    "new": "新建问诊会话",
+    "empty": "暂无历史记录",
+    "emptyHint": "完成问诊并刷新报告后会自动保存",
+    "hasReport": "有报告",
+    "delete": "删除此会话",
+    "deleted": "会话已删除",
+    "deleteFailed": "删除失败",
+    "loadFailed": "加载会话失败",
+    "storageNote": "会话数据存储于本地服务器，仅供本机访问"
+  },
+  "emergency": {
+    "title": "紧急情况提示",
+    "desc": "检测到您描述的症状可能属于紧急医疗情况。",
+    "action": "本工具仅用于整理就诊信息，无法处理紧急情况。请立即：",
+    "call120": "拨打 120",
+    "goEr": "或立即前往最近的急诊科（Emergency），告知分诊护士您的症状。",
+    "continueAnyway": "我已知晓，继续"
+  }
+}

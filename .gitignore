@@ -1,0 +1,23 @@
+node_modules
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+!server/.env.example
+server/.env
+
+# Python
+server/.venv
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Build output (Dockerfile rebuilds dist)
+dist/
+
+# Local app data — do not publish to public repo
+server/data/
+
+# IDE / local tooling
+server/.claude/

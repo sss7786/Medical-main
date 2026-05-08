@@ -1,0 +1,30 @@
+《专业实习》期末项目 — 源码打包说明
+========================================
+
+一、自动打包（推荐）
+  在本项目根目录（与 package.json 同级）PowerShell 执行：
+
+    .\scripts\package-source-for-submission.ps1
+
+  可选：指定压缩包内文件夹名与 zip 文件名（建议最终改为「学号-姓名-期末项目」）：
+
+    .\scripts\package-source-for-submission.ps1 -FolderName "学号-姓名-期末项目" -ZipName "学号-姓名-期末项目.zip"
+
+  生成的 zip 默认在上一级目录「期末大作业-张青」下（与 Medicalpreconsultationorganizer-main 同级）。
+
+二、脚本已自动排除（符合课程要求）
+  • node_modules、__pycache__、.pytest_cache、虚拟环境、.git、dist 等
+  • 所有 .env 类敏感配置文件（请评审方复制 server/.env.example 为 .env）
+  • server/data/sessions.db
+  • server/data/memory/*.json（演示会话记忆，避免隐私与冗余）
+
+三、提交前请你本地自检
+  • 根目录含 package.json；server 含 requirements.txt
+  • 将导出的 PDF 报告按学校要求与源码一并打包（若要求单一 zip）
+  • 压缩包命名：学号-姓名-期末项目.zip
+
+四、评审方恢复运行
+  npm install
+  cd server && pip install -r requirements.txt
+  复制 server/.env.example 为 server/.env（按需填写 OPENAI_API_KEY）
+  详见 README.md

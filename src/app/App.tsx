@@ -296,7 +296,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="flex h-dvh max-h-dvh max-w-[100vw] flex-col overflow-hidden bg-background overflow-x-hidden">
       <Header
         printRef={printRef}
         onOpenHistory={() => setHistoryOpen(true)}
@@ -307,8 +307,8 @@ export default function App() {
         onExportMarkdown={handleExportMarkdown}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-full md:w-[40%] border-r bg-card flex flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="relative flex min-h-0 w-full flex-col overflow-hidden border-r bg-card md:w-[40%]">
           <LeftPanel
             key={sessionId}
             sessionId={sessionId}
@@ -319,7 +319,7 @@ export default function App() {
           />
         </div>
 
-        <div className="hidden md:block flex-1 bg-background overflow-hidden">
+        <div className="hidden min-h-0 flex-1 overflow-hidden bg-background md:block">
           <RightPanel
             report={report}
             refreshing={refreshing}
@@ -335,7 +335,7 @@ export default function App() {
       <Sheet open={reportSheetOpen} onOpenChange={setReportSheetOpen}>
         <SheetContent
           side="right"
-          className="flex h-full w-[100vw] max-w-full flex-col gap-0 border-l p-0 sm:max-w-xl [&>button]:z-[70]"
+          className="flex h-[100dvh] max-h-[100dvh] w-[100vw] max-w-full flex-col gap-0 border-l p-0 pt-[env(safe-area-inset-top,0px)] sm:h-full sm:max-h-none sm:max-w-xl [&>button]:right-[max(1rem,env(safe-area-inset-right))] [&>button]:top-[max(1rem,env(safe-area-inset-top))] [&>button]:z-[70]"
           aria-describedby={undefined}
         >
           <SheetTitle className="sr-only">{t("report.title")}</SheetTitle>
@@ -353,10 +353,15 @@ export default function App() {
         </SheetContent>
       </Sheet>
 
-      {/* 移动端浮动按钮（打开报告） */}
+      {/* 移动端浮动按钮（打开报告）：避开全面屏底部横条与安全区 */}
+      {!reportSheetOpen ? (
       <button
         type="button"
-        className="md:hidden fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform hover:scale-105"
+        className="md:hidden fixed z-50 flex h-14 min-h-[44px] w-14 min-w-[44px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform active:scale-95 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
+        style={{
+          bottom: 'max(1.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.5rem))',
+          right: 'max(1.25rem, env(safe-area-inset-right, 0px))',
+        }}
         aria-label={t("report.openSheet")}
         onClick={() => setReportSheetOpen(true)}
       >
@@ -365,6 +370,7 @@ export default function App() {
           <polyline points="14 2 14 8 20 8" />
         </svg>
       </button>
+      ) : null}
 
       {/* 隐藏打印区 */}
       <div className="hidden">

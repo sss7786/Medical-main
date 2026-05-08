@@ -94,10 +94,10 @@ export function HistoryPanel({
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 left-0 z-[110] w-80 bg-card border-r shadow-xl flex flex-col"
+            className="fixed inset-y-0 left-0 z-[110] flex w-[min(100vw,20rem)] max-w-[calc(100vw-0.5rem)] flex-col border-r bg-card shadow-xl sm:w-80"
           >
             {/* 头部 */}
-            <div className="h-16 border-b flex items-center justify-between px-4 bg-card/95 backdrop-blur-sm">
+            <div className="flex h-16 items-center justify-between border-b bg-card/95 px-3 backdrop-blur-sm pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] pt-[env(safe-area-inset-top,0px)]">
               <div className="flex items-center gap-2">
                 <History className="w-5 h-5 text-primary" />
                 <h2 className="font-semibold text-base">历史问诊记录</h2>
@@ -184,7 +184,7 @@ export function HistoryPanel({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      <div className="flex shrink-0 items-center gap-1 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                         <button
                           onClick={(e) => handleDelete(e, session.id)}
                           className="p-1 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
@@ -202,7 +202,9 @@ export function HistoryPanel({
             </ScrollArea>
 
             {/* 底部说明 */}
-            <div className="p-3 border-t">
+            <div
+              className="border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+            >
               <p className="text-xs text-muted-foreground/60 text-center leading-relaxed">
                 会话数据存储于本地服务器，仅供本机访问
               </p>

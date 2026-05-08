@@ -37,9 +37,9 @@ export function LeftPanel({
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs defaultValue="chat" className="flex-1 flex flex-col min-h-0">
-        <div className="px-4 pt-4 border-b">
-          <TabsList className="grid w-full grid-cols-2">
+      <Tabs defaultValue="chat" className="flex min-h-0 flex-1 flex-col">
+        <div className="border-b px-3 pb-2 pt-3 sm:px-4 sm:pt-4">
+          <TabsList className="grid w-full max-w-full grid-cols-2">
             <TabsTrigger value="chat">{t('tabs.chat')}</TabsTrigger>
             <TabsTrigger value="form">{t('tabs.form')}</TabsTrigger>
           </TabsList>
@@ -69,8 +69,8 @@ export function LeftPanel({
       </Tabs>
 
       {/* Emergency Warning */}
-      <Card className="m-4 border-destructive/30 bg-destructive/5">
-        <CardContent className="p-4">
+      <Card className="mx-3 mb-3 shrink-0 border-destructive/30 bg-destructive/5 sm:mx-4 sm:mb-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex gap-3">
             <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">

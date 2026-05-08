@@ -314,23 +314,23 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full min-h-0 flex-col touch-manipulation">
       {/* 进度条 */}
-      <div className="px-4 pt-3 pb-2 border-b bg-muted/20">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-xs text-muted-foreground font-medium">{t('chat.progressHeading')}</span>
-          <span className="text-xs text-primary font-semibold">
+      <div className="border-b bg-muted/20 px-3 pb-2 pt-2 sm:px-4 sm:pt-3">
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <span className="text-xs font-medium text-muted-foreground">{t('chat.progressHeading')}</span>
+          <span className="shrink-0 text-xs font-semibold text-primary">
             {progressStep}/{progressSegments.length} {t('chat.progressStepSuffix')}
           </span>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-0.5 sm:gap-1">
           {progressSegments.map((def, i) => (
-            <div key={def.labelKey} className="flex-1 flex flex-col items-center gap-0.5">
+            <div key={def.labelKey} className="flex min-w-0 flex-1 flex-col items-center gap-0.5">
               <div className={`h-1.5 w-full rounded-full transition-all duration-500 ${
                 i < progressStep ? 'bg-primary' : i === progressStep ? 'bg-primary/40' : 'bg-muted'
               }`} />
-              <span className={`text-[9px] hidden sm:block truncate max-w-full text-center ${
-                i < progressStep ? 'text-primary font-medium' : 'text-muted-foreground'
+              <span className={`max-w-full truncate text-center text-[8px] leading-tight sm:text-[9px] ${
+                i < progressStep ? 'font-medium text-primary' : 'text-muted-foreground'
               }`}>
                 {t(def.labelKey)}
               </span>
@@ -340,7 +340,7 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
       </div>
 
       {/* 消息列表 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-y-contain p-3 sm:space-y-4 sm:p-4">
         <AnimatePresence>
           {messages.map((message) => (
             <motion.div
@@ -367,10 +367,12 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
                 }`}>
                   <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                   {/* TTS 播报按钮（仅 agent 消息） */}
+                  {/* TTS（触摸设备无 hover，小屏常驻显示） */}
                   {message.type === 'agent' && ttsSupported && (
                     <button
+                      type="button"
                       onClick={() => speakText(message.content, i18n.language || 'zh')}
-                      className="absolute -bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-background border rounded-full p-1 shadow-sm text-muted-foreground hover:text-primary"
+                      className="absolute -bottom-2 right-2 rounded-full border bg-background p-1.5 text-muted-foreground shadow-sm hover:text-primary md:opacity-0 md:transition-opacity md:group-hover:opacity-100"
                       title="朗读此消息"
                     >
                       <Volume2 className="w-3 h-3" />
@@ -405,14 +407,18 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
 
       <input ref={fileInputRef} type="file" accept=".pdf,application/pdf" className="hidden" onChange={handlePickFile} />
 
-      {/* 输入栏 */}
-      <div className="p-4 border-t bg-card/50 backdrop-blur-sm">
-        <div className="flex gap-2">
+      {/* 输入栏：窄屏两行布局，避免图标与输入框挤在一行 */}
+      <div
+        className="border-t bg-card/50 p-3 backdrop-blur-sm sm:p-4 md:pb-4"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
+      >
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {/* 语音输入 */}
           <Button
             variant="outline"
             size="icon"
-            className={`rounded-full shrink-0 ${listening ? 'border-destructive text-destructive animate-pulse' : ''}`}
+            className={`h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 rounded-full sm:h-10 sm:min-h-0 sm:w-10 sm:min-w-0 ${listening ? 'border-destructive text-destructive animate-pulse' : ''}`}
             title={listening ? t('chat.voiceListening') : t('chat.voiceInput')}
             type="button"
             disabled={isTyping}
@@ -426,7 +432,7 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full shrink-0"
+            className="h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 rounded-full sm:h-10 sm:min-h-0 sm:w-10 sm:min-w-0"
             title="上传化验单 PDF"
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -439,7 +445,7 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
             <Button
               variant="outline"
               size="icon"
-              className={`rounded-full shrink-0 ${ttsEnabled ? 'border-primary text-primary' : ''}`}
+              className={`h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 rounded-full sm:h-10 sm:min-h-0 sm:w-10 sm:min-w-0 ${ttsEnabled ? 'border-primary text-primary' : ''}`}
               title={ttsEnabled ? '关闭语音播报' : '开启语音播报（朗读AI回复）'}
               type="button"
               onClick={() => {
@@ -452,22 +458,26 @@ export function ChatInterface({ sessionId, scenarioId, initialMessages, onTransc
             </Button>
           )}
 
+          </div>
+
+          <div className="flex min-w-0 flex-1 items-center gap-2 pr-14 md:pr-0">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder={t('chat.placeholder') || '描述症状与持续时间…'}
-            className="flex-1 rounded-full bg-background"
+            className="min-h-[44px] flex-1 rounded-full bg-background text-base sm:min-h-0 sm:text-sm"
           />
 
           <Button
             onClick={() => { void handleSend(); }}
             size="icon"
-            className="rounded-full shrink-0 bg-primary hover:bg-primary/90"
+            className="h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 rounded-full bg-primary hover:bg-primary/90 sm:h-10 sm:min-h-0 sm:w-10 sm:min-w-0"
             disabled={isTyping}
           >
             <Send className="w-4 h-4" />
           </Button>
+          </div>
         </div>
       </div>
 

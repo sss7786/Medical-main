@@ -81,8 +81,9 @@ function EditableField({
       <span className="ml-1">{value || '—'}</span>
       <button
         onClick={() => { setDraft(value); setEditing(true); }}
-        className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded text-muted-foreground hover:text-foreground"
+        className="rounded p-1 text-muted-foreground opacity-100 transition-opacity hover:text-foreground md:opacity-0 md:group-hover:opacity-100"
         title={`编辑${label}`}
+        type="button"
       >
         <Pencil className="w-3 h-3" />
       </button>
@@ -271,7 +272,7 @@ export function RightPanel({
 
   return (
     <ScrollArea className="h-full">
-      <div className={cn('p-6 space-y-6 max-w-4xl', sheetLayout && 'max-w-none pt-2')}>
+      <div className={cn('max-w-4xl space-y-5 p-4 sm:space-y-6 sm:p-6', sheetLayout && 'max-w-none pt-2 pb-[max(2rem,calc(env(safe-area-inset-bottom,0px)+1rem))]')}>
 
         {/* 标题行 */}
         <div className="space-y-2">
@@ -300,7 +301,7 @@ export function RightPanel({
             <Badge variant="secondary">{refreshing ? '正在更新…' : t('report.updating')}</Badge>
             {report && (
               <Badge variant="outline" className="text-xs gap-1">
-                <Pencil className="w-2.5 h-2.5" />悬停字段可编辑
+                <Pencil className="w-2.5 h-2.5" />小屏点铅笔编辑
               </Badge>
             )}
           </div>

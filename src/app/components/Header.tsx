@@ -137,8 +137,8 @@ export function Header({
     "h-full min-w-0 flex-1 cursor-pointer border-0 bg-transparent py-1 text-xs font-medium text-foreground outline-none focus:ring-0";
 
   return (
-    <header className="sticky top-0 z-50 flex min-h-14 flex-col border-b bg-card/95 backdrop-blur-sm sm:min-h-16">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:flex-nowrap sm:gap-2 sm:px-5 sm:py-0 lg:px-6">
+    <header className="sticky top-0 z-50 flex min-h-14 flex-col border-b bg-card/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-sm sm:min-h-16">
+      <div className="flex max-w-[100vw] flex-wrap items-center justify-between gap-x-1 gap-y-2 px-2 py-2 sm:flex-nowrap sm:gap-x-2 sm:px-5 sm:py-0 lg:px-6">
         {/* 品牌 */}
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-initial sm:gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2D5CFE] to-[#5B82FF] shadow-lg shadow-primary/20 sm:h-10 sm:w-10">

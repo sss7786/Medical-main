@@ -1,0 +1,7 @@
+/* Mobile: avoid auto text zoom + horizontal overflow */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  overflow-x: hidden;
+}

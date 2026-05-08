@@ -709,8 +709,8 @@ def fallback_synthesize(
 
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
-@app.get("/")
-async def root() -> FileResponse | dict[str, str]:
+@app.get("/", response_model=None)
+async def root():
     # Docker / 生产：static 由前端 build 放入；开发仅跑后端时无该文件，返回 JSON 便于确认服务
     built = BASE_DIR / "static" / "index.html"
     if built.is_file():
